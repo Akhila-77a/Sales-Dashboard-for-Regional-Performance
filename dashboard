@@ -1,0 +1,16 @@
+SELECT 
+    R.RegionName,
+    P.ProductName,
+    COUNT(SO.OrderID) AS TotalOrders,
+    SUM(SO.Quantity) AS TotalQuantity,
+    SUM(SO.Quantity * SO.UnitPrice) AS TotalSales,
+    FORMAT(SO.OrderDate, 'yyyy-MM') AS SalesMonth
+FROM SalesOrders SO
+INNER JOIN Products P ON SO.ProductID = P.ProductID
+INNER JOIN Regions R ON SO.RegionID = R.RegionID
+WHERE SO.OrderDate >= DATEADD(MONTH, -12, GETDATE())  -- Last 12 months
+GROUP BY 
+    R.RegionName, 
+    P.ProductName, 
+    FORMAT(SO.OrderDate, 'yyyy-MM')
+ORDER BY TotalSales DESC;
